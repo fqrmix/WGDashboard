@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  wireguard_dashboard:
+   env_file:
+    - .env
+   build:
+     context: .
+   image: wireguard_dashboard 
+   container_name: wireguard_dashboard
+   ports: 
+    - 51830:51830/udp # wireguard 1 port
+    - 51831:51831/udp
+    - 10086:10086 # wireguard dashboard port
+   volumes:
+    - ./img:/home/app/img
+    - ./src:/home/app/src
+    - ./config:/etc/wireguard/
+   working_dir: /home/app/src
+   command: >
+      sh -c "chmod +x /home/app/env.sh && /home/app/env.sh &&
+             sleep 5 &&
+             chmod +x /home/app/src/wgd.sh && /home/app/src/wgd.sh debug &&
+             sleep infinity"
+   restart: "always"
+   sysctls:
+     - net.ipv4.ip_forward=1
+     - net.ipv4.conf.all.src_valid_mark=1
+   cap_add:
+     - NET_ADMIN
+     - SYS_MODULE
+

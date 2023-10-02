@@ -8,10 +8,15 @@ services:
      context: .
    image: wireguard_dashboard 
    container_name: wireguard_dashboard
-   ports: 
+   
+   ports:
     - 51830:51830/udp # wireguard 1 port
     - 51831:51831/udp
     - 10086:10086 # wireguard dashboard port
+   
+   networks:
+    - docker-private-network
+
    volumes:
     - ./img:/home/app/img
     - ./src:/home/app/src
@@ -30,3 +35,7 @@ services:
      - NET_ADMIN
      - SYS_MODULE
 
+networks:
+  docker-private-network:
+    name: docker-private-network
+    external: true
